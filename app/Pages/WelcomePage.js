@@ -1,11 +1,16 @@
 import React from 'react'
 import { ImageBackground, StyleSheet, Text, View , Image } from 'react-native'
 import Button from './components/Button'
-import {} from '@expo/vector-icons'
-import Card from './components/Card'
-import UserDetails from './components/UserDetails'
 import  Container  from './Config/ContainerConfig'
-export default function WelcomePage() {
+import userLocation from './Config/userLocation'
+
+
+
+export default function WelcomePage( { navigation } ) {
+
+    const location = userLocation() ;
+    console.log(location)
+    
     return (
    <ImageBackground blurRadius={2} style={[styles.background,Container]} source={require('../assets/welcomePage.jpg') }  >
             
@@ -15,17 +20,13 @@ export default function WelcomePage() {
         </View>
         
         <View style = {styles.buttContainer}> 
-            <Button title = "Login" color="beige"></Button>
-            <Button title = "SignIn"  color='white'></Button>
+            <Button title = "Login" color="beige" onPress={()=> navigation.navigate("Login")} />
+            <Button title = "Register"  color='white' onPress={()=> navigation.navigate("Register") } />
             
         </View>
 
     </ImageBackground>   
      
-     /* <View style={styles.cardContainer} >
-         <Card title="Sfax->Tunis" prix="30$"  imageSrc={require("../assets/cover.jpeg")} ></Card> 
-        </View> */
-      /* <Driver imageSrc={require("../assets/cover.jpeg")} title="Melek Ketata" > </Driver>*/
     
     )
 }

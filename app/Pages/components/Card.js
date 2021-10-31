@@ -1,13 +1,13 @@
 import React from 'react'
 import { StyleSheet , View , Image,Text, TouchableOpacity} from 'react-native'
 
-export default function Card({title , prix,imageSrc,touchable=true ,backgroundColor}) {
+export default function Card({title , prix,imageSrc,touchable=true ,backgroundColor , onPress}) {
     return (
         
             touchable === true ? 
             
                 <View style={styles.card}>
-                    <TouchableOpacity>
+                    <TouchableOpacity  onPress={onPress}>
                     <Image style={styles.image} source={imageSrc}></Image>
                     </TouchableOpacity>
                     <View style={styles.metaData}>

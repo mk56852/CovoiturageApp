@@ -1,10 +1,10 @@
 import React , {useState} from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { number } from 'yup/lib/locale';
 import Button from './components/Button';
 import Picker from './components/Picker';
 import TextInputComponent from './components/TextInputComponent';
-import {Container} from './Config/ContainerConfig'
+import Container from './Config/ContainerConfig'
 
 
 export default function NewPublication() {
@@ -30,7 +30,9 @@ export default function NewPublication() {
 
 
     return (
-        <View style={[Container,styles.container]}>
+        <ImageBackground blurRadius={2} style={Container} source={require('../assets/welcomePage.jpg')} > 
+        
+        <View style={styles.container}>
             <Picker placeholder="Départ" items={regions} selectedItem={selection1} onSelectItem={ (item) => setSelection1(item.name)} />
             <Picker placeholder="Arrivée" items={regions} selectedItem={selection2} onSelectItem={ (item) => setSelection2(item.name)} />
             <Picker placeholder="nombre de place" items={numberPlace} selectedItem={selection3} onSelectItem={ (item) => setSelection3(item.name)} />
@@ -39,14 +41,15 @@ export default function NewPublication() {
             <Button title="Publier" color="beige" style={styles.Button} />
         
         </View>
+        </ImageBackground>
     )
 }
 
 const styles = StyleSheet.create({
     container : {
         top : 30 , 
-        flex:1 ,
-        marginHorizontal : 30
+        marginHorizontal : 30 , 
+        height : '100%'
         
     },
     Button :{

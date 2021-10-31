@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     Container : 
     {
         paddingTop : Constants.statusBarHeight ,
-        
+        flex : 1 
     }
 })
 export default styles ;

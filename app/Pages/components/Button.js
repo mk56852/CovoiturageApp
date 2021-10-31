@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View , TouchableHighlight, TouchableOpacity } from 'react-native'
 
 export default function Button(props) {
+    
     return (
         <TouchableOpacity style = {[styles.button, {backgroundColor:props.color},props.style]} onPress={props.onPress}>
             <Text  style={{fontWeight:'bold' , fontSize:16}} > {props.title} </Text>
