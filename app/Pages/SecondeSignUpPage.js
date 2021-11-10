@@ -1,4 +1,4 @@
-import React ,{useState}from 'react'
+import React ,{useState , useContext}from 'react'
 import {  ImageBackground, StyleSheet, Text, View } from 'react-native'
 import Button from './components/Button'
 import TextInputComponent from './components/TextInputComponent'
@@ -6,6 +6,7 @@ import Container from './Config/ContainerConfig'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import ImageInput from './components/ImageInput'
+import AuthContext from './API/authContext'
 
 
 const validationSchema = Yup.object().shape({
@@ -14,9 +15,16 @@ const validationSchema = Yup.object().shape({
 
 })
 
-export default function SecondeSignInPage() {
+export default function SecondeSignInPage({route,navigation}) {
     
     const [imageUri, setImageUri] = useState() ;
+    const authContext = useContext(AuthContext)
+    const {key} = route.params
+    const handleSubmit = async () => {
+        authContext.setUser({key})
+        
+    
+    }
     return (
         <ImageBackground blurRadius={2} style={Container} source={require('../assets/welcomePage.jpg')} >
         <View style={styles.container} >
@@ -26,7 +34,7 @@ export default function SecondeSignInPage() {
                 <Text style = {styles.txt}> Do you want to add an Image for your Account ?</Text>
             </View>
 
-            <Formik initialValues={{city:"" , carType:"" }} onSubmit={values =>console.log(values)} validationSchema={validationSchema}>
+            <Formik initialValues={{city:"" , carType:"" }} onSubmit={values => handleSubmit()}>
             {({handleChange , handleSubmit, errors , setFieldTouched,touched}) =>(
             
             <>

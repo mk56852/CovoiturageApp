@@ -1,9 +1,13 @@
-import React from 'react'
+import React ,{useContext,useState, useEffect } from 'react'
 import { StyleSheet,  View } from 'react-native'
 import UserDetails from './components/UserDetails'
-import { FlatList } from 'react-native-gesture-handler'
+import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import IconContainer from './components/IconContainer'
 import  Container  from './Config/ContainerConfig'
+import AuthContext from './API/authContext'
+import authApi from './API/Auth'
+
+
 
 const menuItems = [
     {
@@ -37,17 +41,32 @@ const menuItems = [
 
 ]
 
+
 export default function AccountScreen() {
+    const [data, setData] = useState()
+    const [flag, setflag] = useState(true)
+    const {user, setUser} = useContext(AuthContext) ;
+
+    const getUser = async () => {
+        const {data} = await authApi.details(user.key) ; 
+        setData(data) ;
+        setflag(false)
+    }
+    useEffect( () =>  {
+        getUser() ;
+        } , [flag])
+    
     return (
         <View style={[styles.container, Container]}>
+            {data &&
             <View style = {styles.userContainer} >
-                <UserDetails style={styles.UserDetails} title="Melek Ketata" subTitle="29267362" imageSrc={require("../assets/cover.jpeg")} />
-            </View>
-
+                <UserDetails style={styles.UserDetails} title={data.userName} subTitle={data.phoneNumber} imageSrc={require("../assets/cover.jpeg")} />
+            </View> }
+          
             <View style={styles.IconContainer}>
                 <FlatList data={menuItems} 
                 keyExtractor={menuItem => menuItem.title}
-                renderItem={({item}) => <IconContainer title={item.title} name={item.icon.name}  backgroundColor={item.icon.backgroundColor} iconColor="white" />}
+                renderItem={({item}) =>  <IconContainer title={item.title} name={item.icon.name}  backgroundColor={item.icon.backgroundColor} iconColor="white" />}
                
                 />
 
@@ -55,7 +74,9 @@ export default function AccountScreen() {
             </View>
 
             <View style={[styles.IconContainer,{height : 60}]}>
+                <TouchableWithoutFeedback onPress={() => setUser(null)} style={{height:'100%' , width:'100%'} }>
                 <IconContainer title="Log Out" name="logout" backgroundColor="#ffe66d" />
+                </TouchableWithoutFeedback>
             </View>
         </View>
     )

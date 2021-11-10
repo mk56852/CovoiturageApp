@@ -1,11 +1,14 @@
-import React from 'react'
+import React , {useContext , useState} from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import Button from './components/Button'
 import TextInputComponent from './components/TextInputComponent'
 import Container from './Config/ContainerConfig'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { ScrollView } from 'react-native-gesture-handler'
+import AuthContext from './API/authContext'
+import authApi from './API/Auth'
+import ActivityIndicator from './components/ActivityIndicator'
+import { set } from 'react-native-reanimated'
 
 
 const validationSchema = Yup.object().shape({
@@ -17,13 +20,39 @@ const validationSchema = Yup.object().shape({
 })
 
 export default function SignInPage({navigation}) {
+    const [loading, setLoading] = useState(false) ;
+    const [registerationFailed, setRegistrationFailed] = useState(false) ;
+    const [tripId, settripId] = useState(0)
+    
 
+
+    const handleSubmit = async (userInfo) => {
+
+       setLoading(true)
+       const result = await authApi.register({...userInfo , tripId}) ;
+       setLoading(false)
+
+   
+       
+        if  ( result.data.key =="error" )   return setRegistrationFailed(true) ;
+        setRegistrationFailed(false) ;
+        
+        const user = result.data ;
+    
+        if(user.key != "error")
+        {
+        navigation.navigate("SignUpStep2" , {key :user.key}) ;
+        }
+
+    }  ; 
     return (
         <ImageBackground blurRadius={2} style={Container} source={require('../assets/welcomePage.jpg')} >
-        <View style={styles.container} >
+        <>
+            <ActivityIndicator visible={loading} />
+            <View style={styles.container} >
             
 
-            <Formik initialValues={{email:"" , password:"" ,phoneNumber:"" , userName:""}} onSubmit={(values) => (console.log(values) , navigation.navigate("SignUpStep2")) } validationSchema={validationSchema}>
+            <Formik initialValues={{email:"" , password:"" ,phoneNumber:"" , userName:""}} onSubmit={(values) => (handleSubmit(values)) } validationSchema={validationSchema}>
             {({handleChange , handleSubmit, errors , setFieldTouched,touched}) =>(
             
             <>
@@ -56,6 +85,7 @@ export default function SignInPage({navigation}) {
             </Formik>
             
         </View>
+        </>
         </ImageBackground>
     )
 }

@@ -1,10 +1,14 @@
-import React from 'react'
+import React , {useState , useContext, useEffect} from 'react'
 import { Image, StyleSheet, Text, View ,ImageBackground } from 'react-native'
 import Button from './components/Button'
 import TextInputComponent from './components/TextInputComponent'
 import Container from './Config/ContainerConfig'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
+import authApi from '../Pages/API/Auth'
+import AuthContext from './API/authContext'
+import ActivityIndicator from './components/ActivityIndicator'
+
 
 
 const validationSchema = Yup.object().shape({
@@ -14,14 +18,43 @@ const validationSchema = Yup.object().shape({
 })
 export default function LoginPage() {
 
+    const [loading, setLoading] = useState(false) ;
+    const [loginFailed, setloginFailed] = useState(false) ;
+    const authContext = useContext(AuthContext)
+
+
+
+    const handleSubmit = async (info) => {
+        setLoading(true) ;
+        const result = await authApi.login(info.email , info.password) ;
+        setLoading(false) ;
+        if  ( result.data.key =="error" )   return setloginFailed(true) ;
+        setloginFailed(false) ;
+        const user = result.data ;
+        if(user.key != "error")
+            authContext.setUser(user);
+       
+       
+
+        
+
+    }  ; 
+
+
 
     return (
-
+       
+    
     <ImageBackground blurRadius={2} style={Container} source={require('../assets/welcomePage.jpg')} >    
+     <>
+       
+       <ActivityIndicator visible={loading}    /> 
+ 
+        
         <View style={styles.container}>
             <Image style={styles.logo} source = {require("../assets/logo2.png")}/>
-
-            <Formik initialValues={{email:"" , password:""}} onSubmit={values =>console.log(values)} validationSchema={validationSchema}>
+            {loginFailed==true && <Text > "Invalid email or password </Text> }
+            <Formik initialValues={{email:"" , password:""}} onSubmit={handleSubmit}>
             {({handleChange , handleSubmit, errors , setFieldTouched,touched }) =>(
             
             <>
@@ -43,8 +76,10 @@ export default function LoginPage() {
             </Formik>
             
         </View>
+        </>   
     </ImageBackground>
-    )
+   
+   )
 }
 
 const styles = StyleSheet.create({
@@ -52,10 +87,12 @@ const styles = StyleSheet.create({
         marginTop: 20 ,
         height : "100%"  , 
         justifyContent : 'center' , 
-        alignItems : 'center' , 
+        alignItems : 'center' ,
+ 
 
      
     } ,
+  
     textContainer :
     {
         width:'90%'

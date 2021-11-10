@@ -1,16 +1,15 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { ImageBackground, StyleSheet, Text, View , Image } from 'react-native'
 import Button from './components/Button'
 import  Container  from './Config/ContainerConfig'
-import userLocation from './Config/userLocation'
+
 
 
 
 export default function WelcomePage( { navigation } ) {
+ 
 
-    const location = userLocation() ;
-    console.log(location)
-    
+
     return (
    <ImageBackground blurRadius={2} style={[styles.background,Container]} source={require('../assets/welcomePage.jpg') }  >
             

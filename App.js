@@ -21,23 +21,49 @@ import SecondeSignInPage from './app/Pages/SecondeSignUpPage';
 import {NavigationContainer} from '@react-navigation/native'
 import AuthNavigator from './app/Pages/navigations/AuthNavigation';
 import AppNavigator from './app/Pages/navigations/AppNavigator';
+import clientApi from './app/Pages/API/Client'
+import AuthContext from './app/Pages/API/authContext';
+import refreshContext from './app/Pages/API/refreshContext';
+import MapView from 'react-native-maps';
+import TrackingPage from './app/Pages/TrackingPage';
+import UserLocation from './app/Pages/Config/userLocation';
+
 
 
 export default function App() {
   
+  const [user,setUser] =  useState(null) ; 
+  const [refresh, setrefresh] = useState(false) ;
   
   
   
  return(
+
+ 
+  
+ 
+  <refreshContext.Provider value={{refresh,setrefresh}}>
+    <AuthContext.Provider value={{user , setUser}}>
+      <NavigationContainer>
+        {user ? <AppNavigator /> : <AuthNavigator /> }
+      </NavigationContainer> 
+    </AuthContext.Provider>
+  </refreshContext.Provider>
+
+
+
+
+
+/*
   <NavigationContainer>
-      <AuthNavigator />
-  </NavigationContainer>  
-
-  /* <NavigationContainer>
-       <AppNavigator />
+    <AppNavigator></AppNavigator>
   </NavigationContainer> */
+   /* <View style={{width:'100%' , height : '100%'}}>
+    <UserLocation />
+    </View>*/
 
 
+ 
   
   //<WelcomePage />
    //<HomePage />
@@ -53,4 +79,9 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  map: {
+    width: 200 , 
+    height: 400 ,
+  },
+});

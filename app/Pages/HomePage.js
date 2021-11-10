@@ -1,38 +1,63 @@
-import React from 'react'
-import { StyleSheet, StatusBar, View } from 'react-native'
+import React , {useState,useEffect , useContext} from 'react'
+import { StyleSheet } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import Card from './components/Card'
 import Container from './Config/ContainerConfig'
+import PublicationAPI from './API/PublicationAPI'
+import ActivityIndicator from './components/ActivityIndicator'
+import refreshContext from './API/refreshContext'
+import UserPosition from './API/UserPosition'
+import Auth from './API/authContext'
+import getLocation from './Config/getUserLocation'
 
-
-const posts = [
-    {
-        id:1,
-        title:"sfax -> Tunis" ,
-        prix : "20 DT",
-        imageSrc: require("../assets/cover.jpeg")
-    },
-    {
-        id:2,
-        title:"Tunis -> Sousse" ,
-        prix : "15 DT",
-        imageSrc: require("../assets/cover.jpeg")
-    },
-    {
-        id:3,
-        title:"sfax -> Benzart" ,
-        prix : "25 DT",
-        imageSrc: require("../assets/cover.jpeg")
-    }
-]
 export default function HomePage({navigation}) {
-    return (
+    
+    const RefreshContext = useContext(refreshContext)
+    const authContext = useContext(Auth)
+    const [data, setdata] = useState()
+    const [location, setLocation] = useState()
+    const [loading, setloading] = useState(false)
+    const [flag, setflag] = useState(true)
+    
+
+
+    if(location)
+        UserPosition.updatePosition({id:authContext.user.key , position:location} ); 
+   
+    const getData = async () => {
+        
+        setloading(true); 
+        const dataFromServer = await PublicationAPI.getAllPost() ;
+        
+        const arr = Object.keys(dataFromServer.data).map(function(key) {
+            return { id: key, ...dataFromServer.data[key] };
+          });
+
+        if (arr)
+        { setdata(arr.reverse()) ;}
+        
+        setloading(false) ;
+        RefreshContext.setrefresh(false) ;
        
-       <FlatList data={posts} 
+    
+    }
+    
+    useEffect( () => {
+        getData() ;
+        getLocation({setLocation}) ;
+        setflag(false) ;
+    }, [ RefreshContext.refresh])
+    
+
+    return (
+       <>
+       <ActivityIndicator visible={loading} />
+       <FlatList data={data} 
         keyExtractor={post => post.id.toString()}
-        renderItem = {({item}) => <Card title={item.title} prix={item.prix} imageSrc={item.imageSrc} onPress = {() => navigation.navigate("Details",item) }/> } 
+        renderItem = {({item}) => <Card title={item.publicationInfo.departNom + "    -->    " + item.publicationInfo.arriveNom} prix={item.publicationInfo.prix+" DT "} imageSrc={require("../assets/New.png.jpg")} onPress = {() => navigation.navigate("Details",{item}) }/> } 
         style = {[styles.cardContainer,Container]}
         /> 
+        </>
       
       
 
